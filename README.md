@@ -30,7 +30,7 @@ First, we will use VMWare Workstation to create a GUI-based Debian 12 machine.
 
 
 ## Configure VMWare VM
-Now that we have our VM, we will add some simple configurations to it. We will do this through a post run script ().
+Now that we have our VM, we will add some simple configurations to it. We will do this through a post run script (https://phillipsd.com/210/post_run).
 First, we need to add our tux user to the sudoers file:
 ```
 su -
@@ -39,7 +39,7 @@ usermod -aG sudo tux
 ```
 Now tux can use sudo.
 
-Next, we will run `wget -------------------` to get the post run script.
+Next, we will run `wget https://phillipsd.com/210/post_run` to get the post run script.
 Finally, run `bash post_run` to run our post run script to set up our VM. 
 Reboot your machine and it will launch in a CLI. To get back to a GUI, type `startx` as your tux user.
 
@@ -229,21 +229,17 @@ hostname
 hostname -I
 ```
 
-
-
-## Installing KVM
-
+Our first VM is ready to go!
 
 ## Creating Debian 12 VM on KVM 
 
+Now let's create our KVM VM. Part of the post run script installed all of the necessary packages to do this. We can just search for and run virt-manager.
 
+Now go File -> New Virtual Machine
+We will then go through a very similar process to what we did with VMWare.
+Once we do this and reboot, we get to the installer for Debian. From here, we will do it a little different - go to Advanced -> Automated Install
+Soon, we will be prompted for a preseed file - this selects the options for us. We will use https://phillipsd.com/210/f24vda.cfg to do this.
 
-  20. We will then be presented with a screen to enter where our preseed file is. We can just enter the URL of the preseed file called f24sda.cfg (we want this one as the names of the drives in this case is sda)
-  21. 
-
-
-
-
-
+Once this is done, and we finish the installer, we will have a Debian 12 VM running on KVM which is itself running on a Debian 12 VM that is on the VMWare stack.
 
 

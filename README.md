@@ -229,6 +229,16 @@ hostname
 hostname -I
 ```
 
+## LVM Configuration
+Now let's add some logical volumes with LVM. LVM should already be installed since we included it in the installer.
+First, we will add a couple new virtual disks to our VM. Let's add 2 10 GB disks (sdb, sdc) 
+
+LVM has some layers we will work through:
+1. Physical Volume: Tell LVM we can use these disks: `sudo pvcreate /dev/sdb1 /dev/sdc1`
+2. Volume group: We will pool these volumes together: `sudo vgcreate data_vg /deb/sdb1 /dev/sdc1`
+3. Logical volume: Finally, we will create the logical volume: `sudo lvcreate --name data_lv --size 20GB data_vg`
+
+
 Our first VM is ready to go!
 
 ## Creating Debian 12 VM on KVM 

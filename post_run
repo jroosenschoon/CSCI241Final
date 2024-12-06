@@ -1,0 +1,194 @@
+#!/bin/bash
+# runall
+# install extra pkgs for tty 
+
+sudo apt-get update && sudo apt-get upgrade -y
+
+aptDepends=(
+sudo
+a2ps
+acpid
+aspell
+astyle
+autossh
+bc
+bind9-dnsutils
+bsdgames
+bsdmainutils
+bsdutils
+build-essential
+byobu
+bzip2
+calendar
+calc
+coreutils
+cryptsetup
+cu
+cups
+curl
+dc
+dialog
+dkms
+ecl
+elinks
+fortune-mod
+fortunes
+gpm
+jq
+links
+lua5.4
+lynx
+mailutils
+minicom
+mutt
+ncal
+ncat
+net-tools
+newlisp
+nmap
+nvi
+pandoc
+printer-driver-cups-pdf
+python3-pdfminer
+rsync
+screen
+shellcheck
+spice-vdagent
+sqlite3
+sshfs
+tmux
+util-linux
+vacation
+vim-nox
+vim-scripts
+w3m
+wget
+whois
+x11-apps
+zlib1g-dev
+virtinst 
+ufw
+qemu-kvm 
+libvirt-clients 
+libvirt-daemon-system 
+libvirt-daemon 
+bridge-utils 
+qemu-system 
+qemu-utils 
+virt-manager 
+)
+sudo apt-get install -y "${aptDepends[@]}" 
+
+# web_ins
+# install apache2
+sudo tasksel install web-server 
+# change default webpage
+cd /var/www/html/
+sudo mv index.html apache_default.org 
+sudo wget https://phillipsd.com/basic.html 
+sudo mv basic.html index.html
+
+# mkstuff
+# create .funcs and .bash_aliases 
+# ~/bin/upit and tux user tweaks
+cd
+
+cat - > ~/.funcs << "FUN"
+whdr() {
+echo '<!DOCTYPE html><head><title>bash web</title></head><body><pre>'
+
+}
+wftr() {
+echo '</pre></body></html>'
+
+}
+calcit() {
+    printf "%s\n" "$@" | bc -lq ~/.bcrc  
+}
+FUN
+
+
+
+
+cat - > ~/.bash_aliases << "EOF"
+#.bash_aliases 
+# usually in .bashrc 
+export PATH="$HOME/bin:$PATH" 
+export EDITOR="vim"
+export EDIT="vim"
+export MYIP=$(hostname -I | cut -f1 -d" ")
+alias h=' history'
+alias l=' ls -sailF --color=auto'
+alias la=' ls -A --color=auto'
+alias lc=' ls -CF --color=auto'
+alias ll=' ls -alF --color=auto'
+alias lr=' ls -artlF --color=auto'
+alias lr1=' ls -1rtlF --color=auto'
+# source .funcs 
+if [ -f ~/.funcs ]; then
+    . ~/.funcs
+fi
+echo $MYIP
+EOF
+
+
+cat - > ~/.bcrc << "BCRC"
+scale=2
+BCRC
+
+mkdir bin
+cat - > ~/bin/upit << "UPIT"
+#!/bin/bash
+# upit
+#snap refresh - ubuntu desktop
+sudo apt-get check
+sudo apt-get clean
+sudo apt-get -y autoclean
+sudo apt-get remove
+sudo apt-get -y autoremove
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
+uname -a
+cat /proc/version
+cat /etc/os-release
+#--
+UPIT
+chmod +x ~/bin/upit 
+
+# enable the getty for ttyS0 (getty allows login)
+sudo systemctl enable serial-getty@ttyS0.service
+sudo systemctl start serial-getty@ttyS0.service
+sudo systemctl daemon-reload
+
+# setup firewall
+sudo ufw enable
+sudo ufw allow ssh
+sudo ufw allow "WWW Full"
+
+# boot to multiuser - no gui
+sudo systemctl set-default multi-user
+
+# rename host 
+# check first enp4s0f0 is for kvm 
+MACNAME=$(ip a show enp4s0f0 | head -2 | tail -1 | awk '{print $2}' | awk -F":" '{print $4 $5 $6}')
+echo "lab-"$MACNAME
+echo "lab-"$MACNAME > tmp.txt
+sudo mv tmp.txt /etc/hostname
+hostname 
+hostname -I
+ssh-keygen<<'RTNS'
+
+
+
+RTNS
+sudo reboot
+
+# multiline comments - unorthodox
+:<<'CMT'
+here docs are awesome!
+Linux runs the world.
+Amazing for overwieght penguin.
+CMT
+#--
+

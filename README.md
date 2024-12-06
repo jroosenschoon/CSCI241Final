@@ -238,6 +238,25 @@ LVM has some layers we will work through:
 2. Volume group: We will pool these volumes together: `sudo vgcreate data_vg /deb/sdb1 /dev/sdc1`
 3. Logical volume: Finally, we will create the logical volume: `sudo lvcreate --name data_lv --size 20GB data_vg`
 
+Now that we have our LV, we can mount it to use it:
+```
+sudo mkdir /mnt/data
+sudo mount /dev/data_vg/data_lv /mnt/data
+```
+
+This will not make the mount point persistent. To do this, we will have to modift the /etc/fstab file.
+The easiest way is to add the line: 
+```
+/dev/data_vg/data_lv /mnt/data ext4 defaults 0 0
+```
+A better way is to use the UUID of the LV. We can find this with sudo blkid /dev/data_vg/data_lv  and then add the line: 
+```
+UUID=<uuid> /mnt/data ext4 defaults 0 0
+```
+
+
+
+
 
 Our first VM is ready to go!
 
